@@ -5,7 +5,7 @@ const MAP_NUM_COLS = 15;
 const WINDOW_WIDTH = MAP_NUM_COLS * TILE_SIZE;
 const WINDOW_HEIGHT = MAP_NUM_ROWS * TILE_SIZE;
 
-class Map {
+class Grid {
   constructor() {
     this.grid = [
       [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -34,6 +34,21 @@ class Map {
       }
     }
   }
+
+  hasWallAt(x, y) {
+    const gridRow = Math.floor(y / TILE_SIZE);
+    const gridCol = Math.floor(x / TILE_SIZE);
+
+    if (gridRow < 0 || gridRow >= MAP_NUM_ROWS) {
+      return true;
+    }
+
+    if (gridCol < 0 || gridCol >= MAP_NUM_COLS) {
+      return true;
+    }
+
+    return this.grid[gridRow][gridCol] == 1;
+  }
 }
 
 class Player {
@@ -48,12 +63,21 @@ class Player {
     this.rotationSpeed = 2 * (Math.PI / 180);
   }
 
-  update() {
+  update(grid) {
     this.rotationAngle += this.turnDirection * this.rotationSpeed;
 
     const moveStep = this.walkDirection * this.moveSpeed;
-    this.x += Math.cos(this.rotationAngle) * moveStep;
-    this.y += Math.sin(this.rotationAngle) * moveStep;
+
+    const newXPos = this.x + Math.cos(this.rotationAngle) * moveStep;
+    const newYPos = this.y + Math.sin(this.rotationAngle) * moveStep;
+
+    if (!grid.hasWallAt(newXPos, this.y)) {
+      this.x = newXPos;
+    }
+
+    if (!grid.hasWallAt(this.x, newYPos)) {
+      this.y = newYPos;
+    }
   }
 
   render() {
@@ -65,7 +89,7 @@ class Player {
   }
 }
 
-const grid = new Map();
+const grid = new Grid();
 const player = new Player();
 
 function keyPressed() {
@@ -97,7 +121,7 @@ function setup() {
 }
 
 function update() {
-  player.update();
+  player.update(grid);
 }
 
 function draw() {
