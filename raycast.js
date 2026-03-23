@@ -71,6 +71,14 @@ class Player {
   update(grid) {
     this.rotationAngle += this.turnDirection * this.rotationSpeed;
 
+    if (this.rotationAngle > 2 * Math.PI) {
+      this.rotationAngle -= 2 * Math.PI;
+    }
+
+    if (this.rotationAngle < 0) {
+      this.rotationAngle += 2 * Math.PI;
+    }
+
     const moveStep = this.walkDirection * this.moveSpeed;
 
     const newXPos = this.x + Math.cos(this.rotationAngle) * moveStep;
@@ -101,7 +109,34 @@ class Ray {
 
   render() {
     stroke('rgba(255, 0, 0, 0.3)');
-    line(player.x, player.y, player.x + Math.cos(this.rayAngle) * 30, player.y + Math.sin(this.rayAngle) * 30);
+    const gridRow = Math.floor(player.y / TILE_SIZE);
+    const gridCol = Math.floor(player.x / TILE_SIZE);
+    const rowOffset = gridRow * TILE_SIZE;
+    const colOffset = gridCol * TILE_SIZE;
+
+    //inside grid
+    const playerGridX = player.x - colOffset;
+    const playerGridY = player.y - rowOffset;
+
+    let wallX;
+    let wallY;
+
+    if (this.rayAngle <= Math.PI) {
+      const opposite = TILE_SIZE - playerGridY;
+      const hypotenuse = opposite / Math.sin(this.rayAngle);
+
+      const adjacent = Math.cos(this.rayAngle) * hypotenuse;
+      wallX = player.x + adjacent;
+      wallY = player.y + opposite;
+    } else {
+      const opposite = -playerGridY;
+      const hypotenuse = opposite / Math.sin(this.rayAngle);
+      const adjacent = Math.cos(this.rayAngle) * hypotenuse;
+      wallX = player.x + adjacent;
+      wallY = player.y + opposite;
+    }
+
+    line(player.x, player.y, wallX, wallY);
   }
 
   cast() {
@@ -143,7 +178,15 @@ function castAllRays() {
   let rayAngle = player.rotationAngle - FOV_ANGLE / 2;
   rays = [];
 
-  for (let i = 0; i < NUM_RAYS; i++) {
+  // for (let i = 0; i < NUM_RAYS; i++) {
+  for (let i = 0; i < 1; i++) {
+    if (rayAngle > 2 * Math.PI) {
+      rayAngle -= 2 * Math.PI;
+    }
+
+    if (rayAngle < 0) {
+      rayAngle += 2 * Math.PI;
+    }
     const ray = new Ray(rayAngle);
     ray.cast();
     rays.push(ray);
