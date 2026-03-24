@@ -151,10 +151,6 @@ class Ray {
     let nextHorzTouchX = xIntercept;
     let nextHorzTouchY = yIntercept;
 
-    if (this.isRayFacingUp) {
-      nextHorzTouchY--;
-    }
-
     // Increment xStep and yStep until we find a wall
     while (
       nextHorzTouchX >= 0 &&
@@ -162,7 +158,7 @@ class Ray {
       nextHorzTouchY >= 0 &&
       nextHorzTouchY <= WINDOW_WIDTH
     ) {
-      if (grid.hasWallAt(nextHorzTouchX, nextHorzTouchY)) {
+      if (grid.hasWallAt(nextHorzTouchX, nextHorzTouchY - (this.isRayFacingUp ? 1 : 0))) {
         foundHorzWallHit = true;
         horzWallHitX = nextHorzTouchX;
         horzWallHitY = nextHorzTouchY;
@@ -199,10 +195,6 @@ class Ray {
     let nextVertTouchX = xIntercept;
     let nextVertTouchY = yIntercept;
 
-    if (this.isRayFacingLeft) {
-      nextVertTouchX--;
-    }
-
     // Increment xStep and yStep until we find a wall
     while (
       nextVertTouchX >= 0 &&
@@ -210,7 +202,7 @@ class Ray {
       nextVertTouchY >= 0 &&
       nextVertTouchY <= WINDOW_WIDTH
     ) {
-      if (grid.hasWallAt(nextVertTouchX, nextVertTouchY)) {
+      if (grid.hasWallAt(nextVertTouchX - (this.isRayFacingLeft ? 1 : 0), nextVertTouchY)) {
         foundVertWallHit = true;
         vertWallHitX = nextVertTouchX;
         vertWallHitY = nextVertTouchY;
