@@ -280,11 +280,11 @@ function render3DProjectedWalls() {
   for (let i = 0; i < NUM_RAYS; i++) {
     const ray = rays[i];
 
-    const rayDistance = ray.distance;
+    const perpendicularWallDist = ray.distance * Math.cos(ray.rayAngle - player.rotationAngle);
     const distanceProjectPlane = WINDOW_WIDTH / 2 / Math.tan(FOV_ANGLE / 2);
 
     // projected wall height
-    const wallStripHeight = (TILE_SIZE / rayDistance) * distanceProjectPlane;
+    const wallStripHeight = (TILE_SIZE / perpendicularWallDist) * distanceProjectPlane;
 
     fill('rgba(255, 255, 255, 1.0)');
     noStroke();
