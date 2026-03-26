@@ -286,7 +286,10 @@ function render3DProjectedWalls() {
     // projected wall height
     const wallStripHeight = (TILE_SIZE / perpendicularWallDist) * distanceProjectPlane;
 
-    fill('rgba(255, 255, 255, 1.0)');
+    // compute the transparency based on the wall distance
+    const alpha = 170 / perpendicularWallDist;
+
+    fill('rgba(255, 255, 255,' + alpha + ')');
     noStroke();
     rect(i * WALL_STRIP_WIDTH, WINDOW_HEIGHT / 2 - wallStripHeight / 2, WALL_STRIP_WIDTH, wallStripHeight);
   }
