@@ -139,7 +139,7 @@ class Ray {
     );
   }
 
-  cast(columId) {
+  cast() {
     let yIntercept, xIntercept;
     let xStep, yStep;
     let horzWallHitX = 0;
@@ -287,9 +287,11 @@ function render3DProjectedWalls() {
     const wallStripHeight = (TILE_SIZE / perpendicularWallDist) * distanceProjectPlane;
 
     // compute the transparency based on the wall distance
-    const alpha = 170 / perpendicularWallDist;
+    // const alpha = 170 / perpendicularWallDist;
+    const alpha = 1.0;
+    const color = ray.wasHitVertical ? 255 : 180;
 
-    fill('rgba(255, 255, 255,' + alpha + ')');
+    fill(`rgba(${color}, ${color}, ${color}, ${alpha})`);
     noStroke();
     rect(i * WALL_STRIP_WIDTH, WINDOW_HEIGHT / 2 - wallStripHeight / 2, WALL_STRIP_WIDTH, wallStripHeight);
   }
@@ -308,18 +310,15 @@ function distanceBetweenPoints(x1, y1, x2, y2) {
 }
 
 function castAllRays() {
-  let columnId = 0;
-
   let rayAngle = player.rotationAngle - FOV_ANGLE / 2;
   rays = [];
 
-  for (let i = 0; i < NUM_RAYS; i++) {
+  for (let col = 0; col < NUM_RAYS; col++) {
     const ray = new Ray(rayAngle);
-    ray.cast(columnId);
+    ray.cast();
     rays.push(ray);
 
     rayAngle += FOV_ANGLE / NUM_RAYS;
-    columnId++;
   }
 }
 
